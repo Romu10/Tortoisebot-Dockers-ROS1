@@ -10,7 +10,7 @@ RUN apt-get update
 RUN cd /simulation_ws/src \
  && rm -rf tortoisebot
 
-# Create dir for tortoisebot and course_web_dev_ros
+# Create dir for tortoisebot
 RUN cd /simulation_ws/src \ 
  && mkdir tortoisebot 
 

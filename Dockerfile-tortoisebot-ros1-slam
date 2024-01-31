@@ -13,7 +13,7 @@ RUN sudo apt-get -y install ros-noetic-slam-gmapping
 RUN cd /simulation_ws/src \
  && rm -rf tortoisebot
 
-# Create dir for tortoisebot and course_web_dev_ros
+# Create dir for tortoisebot
 RUN cd /simulation_ws/src \ 
  && mkdir tortoisebot 
 
