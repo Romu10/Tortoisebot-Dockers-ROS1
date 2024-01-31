@@ -1,0 +1,24 @@
+FROM romu10/romuloperez-cp22:tortoisebot_ros1_slam_cartographer_base
+
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+# Minimal setup
+RUN apt-get update 
+
+# Eliminate docker file tortoisebot
+RUN cd /simulation_ws/src \
+ && rm -rf tortoisebot
+
+# Create dir for tortoisebot and course_web_dev_ros
+RUN cd /simulation_ws/src \ 
+ && mkdir tortoisebot 
+
+# Copy local tortoisebot 
+COPY tortoisebot /simulation_ws/src/tortoisebot
+
+# Build the Catkin workspace and ensure it's sourced
+RUN source /opt/ros/noetic/setup.bash \
+ && cd /simulation_ws \
+ && catkin_make
+RUN echo "source /simulation_ws/devel/setup.bash" >> ~/.bashrc
