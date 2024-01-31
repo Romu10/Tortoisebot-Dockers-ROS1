@@ -7,7 +7,7 @@ SHELL [ "/bin/bash" , "-c" ]
 RUN apt-get update 
 
 # Install gmapping 
-RUN sudo apt-get -y install ros-noetic-slam-gmapping
+RUN apt-get -y install ros-noetic-slam-gmapping
 
 # Eliminate docker file tortoisebot
 RUN cd /simulation_ws/src \
