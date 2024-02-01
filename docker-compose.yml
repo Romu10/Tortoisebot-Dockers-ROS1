@@ -4,7 +4,7 @@ services:
   ros-master:
     hostname: ros_master
     image: ros:noetic-ros-core
-    container_name: tortoisebot_ros1_gazebo_rosmaster
+    container_name: tortoisebot_ros1_rosmaster
     command: stdbuf -o L roscore
     networks:
       - ros
@@ -14,7 +14,7 @@ services:
 
   tortoisebot_ros1_gazebo:
     image: romu10/romuloperez-cp22:tortoisebot-ros1-gazebo
-    container_name: tortoisebot_ros1_gazebo_container
+    container_name: tortoisebot_ros1_gazebo
     restart: "no"
     environment:
       - DISPLAY
@@ -32,7 +32,7 @@ services:
 
   tortoisebot_ros1_slam:
     image: romu10/romuloperez-cp22:tortoisebot-ros1-slam
-    container_name: tortoisebot_ros1_slam_container
+    container_name: tortoisebot_ros1_slam
     restart: "no"
     environment:
       - DISPLAY
@@ -50,7 +50,7 @@ services:
 
   tortoisebot_ros1_waypoints:
     image: romu10/romuloperez-cp22:tortoisebot-ros1-waypoints
-    container_name: tortoisebot_ros1_waypoints_container
+    container_name: tortoisebot_ros1_waypoints
     restart: "no"
     environment:
       - DISPLAY
@@ -68,7 +68,7 @@ services:
 
   tortoisebot_ros1_webapp:
     image: romu10/romuloperez-cp22:tortoisebot-ros1-webapp
-    container_name: tortoisebot_ros1_webapp_container
+    container_name: tortoisebot_ros1_webapp
     restart: "no"
     environment:
       - DISPLAY
