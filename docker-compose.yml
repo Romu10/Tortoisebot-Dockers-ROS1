@@ -1,18 +1,51 @@
 version: "3.7"
 services:
+
+  ros-master:
+    hostname: ros_master
+    image: ros:noetic-ros-core
+    container_name: tortoisebot_ros1_gazebo_rosmaster
+    command: stdbuf -o L roscore
+    networks:
+      - ros
+    environment:
+      - ROS_HOSTNAME=ros_master
+      - ROS_MASTER_URI=http://ros_master:11311
+
   tortoisebot_ros1_gazebo:
     image: romu10/romuloperez-cp22:tortoisebot-ros1-gazebo
     container_name: tortoisebot_ros1_gazebo_container
+    restart: "no"
     environment:
       - DISPLAY
+      - ROS_MASTER_URI=http://ros_master:11311
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     stdin_open: true
     tty: true
     networks:
-      - ros_network
+      - ros
+    depends_on:
+      - ros-master
     command: bash -c "source devel/setup.bash && roslaunch tortoisebot_gazebo tortoisebot_playground.launch"
 
+  tortoisebot_ros1_slam:
+    image: romu10/romuloperez-cp22:tortoisebot-ros1-slam
+    container_name: tortoisebot_ros1_slam_container
+    restart: "no"
+    environment:
+      - DISPLAY
+      - ROS_MASTER_URI=http://ros_master:11311
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    stdin_open: true
+    tty: true
+    networks:
+      - ros
+    depends_on:
+      - ros-master
+    command: bash -c "source devel/setup.bash && roslaunch tortoisebot_slam mapping.launch"
+
 networks:
-  ros_network:
+  ros:
     driver: bridge
