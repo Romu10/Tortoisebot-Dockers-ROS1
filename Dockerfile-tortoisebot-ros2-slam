@@ -42,8 +42,13 @@ RUN apt update -y \
  && apt install -y ros-dev-tools \
  && apt install -y ros-galactic-joint-state-publisher \
  && apt install -y ros-galactic-robot-state-publisher \
+ && apt install -y ros-galactic-cartographer \
+ && apt install -y ros-galactic-cartographer-ros \
  && apt install -y ros-galactic-gazebo-plugins \
+ && apt install -y ros-galactic-teleop-twist-keyboard \
+ && apt install -y ros-galactic-teleop-twist-joy \
  && apt install -y ros-galactic-xacro \
+ && apt install -y ros-galactic-nav2* \
  && apt install -y ros-galactic-urdf \
  && apt install -y ros-galactic-v4l2-camera
 
