@@ -23,6 +23,10 @@ RUN cd /simulation_ws/src \
 RUN cd /simulation_ws/src \ 
  && mkdir course_web_dev_ros
 
+# git clone tortoisebot_webapp
+RUN cd /simulation_ws/src \ 
+ && git clone https://github.com/Romu10/tortoisebot_webapp.git
+
 # Copy local course_web_dev_ros
 COPY course_web_dev_ros /simulation_ws/src/course_web_dev_ros
 
