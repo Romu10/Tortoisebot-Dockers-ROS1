@@ -86,7 +86,7 @@ services:
       - tortoisebot_ros1_gazebo
     hostname: tortoisebot_ros1_waypoints 
     command: 
-      - bash -c "cd tortoisebot_webapp && python3 -m http.server 7000"
+      - bash -c "cd /webpage_ws/src/tortoisebot_webapp && python3 -m http.server 7000"
       - bash -c "cd /simulation_ws && source devel/setup.bash && roslaunch course_web_dev_ros web.launch" 
 
 networks:
