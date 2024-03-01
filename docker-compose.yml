@@ -77,6 +77,8 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
     stdin_open: true
     tty: true
+    ports:
+      - "9090:9090"
     networks:
       - ros
     depends_on:
@@ -98,6 +100,8 @@ services:
     tty: true
     ports:
       - "7000:7000"
+      - "11315:11315"
+      - "20001:20001" 
     networks:
       - ros
     depends_on:
