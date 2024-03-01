@@ -19,14 +19,13 @@ RUN apt-get -y install ros-noetic-web-video-server
 RUN cd /simulation_ws/src \
  && rm -rf tortoisebot
 
-# Create dir for course_web_dev_ros
-RUN cd /simulation_ws/src \ 
- && mkdir course_web_dev_ros
+# Create webpage_ws workspace
+WORKDIR /
+RUN mkdir -p webpage_ws/src 
 
-# git clone tortoisebot_webapp
-RUN cd /simulation_ws/src \ 
- && git clone https://github.com/Romu10/tortoisebot_webapp.git \
- && git clone https://github.com/Romu10/WEB-APP-for-Control-the-Tortoisebot.git
+# Git clone the WEBAPP pkg
+WORKDIR /webpage_ws/src
+RUN git clone https://github.com/Romu10/WEB-APP-for-Control-the-Tortoisebot.git .
 
 # Copy local course_web_dev_ros
 COPY course_web_dev_ros /simulation_ws/src/course_web_dev_ros

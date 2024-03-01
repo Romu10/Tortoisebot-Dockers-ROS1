@@ -77,13 +77,17 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
     stdin_open: true
     tty: true
+    ports:
+      - "7000:7000"
     networks:
       - ros
     depends_on:
       - ros-master
       - tortoisebot_ros1_gazebo
     hostname: tortoisebot_ros1_waypoints 
-    command: bash -c "source devel/setup.bash && roslaunch course_web_dev_ros web.launch"
+    command: 
+      - bash -c "cd tortoisebot_webapp && python3 -m http.server 7000"
+      - bash -c "cd /simulation_ws && source devel/setup.bash && roslaunch course_web_dev_ros web.launch" 
 
 networks:
   ros:
