@@ -1,0 +1,89 @@
+FROM osrf/ros:noetic-desktop-full-focal
+
+# Tell the container to use the C.UTF-8 locale for its language settings
+ENV LANG C.UTF-8
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+# Install required packages
+RUN set -x \
+    && apt-get update \
+    && apt-get --with-new-pkgs upgrade -y \
+    && apt-get install -y git \
+    && apt-get install -y ros-noetic-turtlebot3 \
+    && apt-get install -y ros-noetic-turtlebot3-bringup ros-noetic-turtlebot3-description \
+    && apt-get install -y ros-noetic-turtlebot3-example ros-noetic-turtlebot3-gazebo \
+    && apt-get install -y ros-noetic-turtlebot3-msgs ros-noetic-turtlebot3-navigation \
+    && apt-get install -y ros-noetic-turtlebot3-simulations \
+    && apt-get install -y ros-noetic-turtlebot3-slam ros-noetic-turtlebot3-teleop \
+    && apt-get install -y ros-noetic-gmapping ros-noetic-slam-gmapping ros-noetic-openslam-gmapping \ 
+    && apt-get install -y ros-noetic-map-server \
+    && apt-get install -y ros-noetic-move-base \
+    && apt-get install -y ros-noetic-navigation \
+    && apt-get install -y ros-noetic-dwa-local-planner \ 
+    && apt-get install -y ros-noetic-ira-laser-tools \
+    && apt-get install -y ros-noetic-teleop-twist-keyboard \
+    && apt-get install git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Google Carto
+RUN apt-get update \
+    && apt-get install -y python3-wstool python3-rosdep ninja-build stow
+
+# Link python3 to python otherwise ROS scripts fail when using the OSRF contianer
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Set up the simulation workspace
+WORKDIR /
+RUN mkdir -p ros1_ws/src/course_web_dev_ros
+WORKDIR /ros1_ws/src
+
+# Copy this neccesary packages 
+COPY course_web_dev_ros /ros1_ws/src/course_web_dev_ros
+
+# Git clone from tortoisebot simulation packages 
+RUN /bin/bash -c  "git clone --recursive https://github.com/rigbetellabs/tortoisebot.git"
+
+# Build
+WORKDIR /ros1_ws
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+
+# Create a new 'carto_ws' workspace inside your existing ‘ros1_ws’.
+WORKDIR /ros1_ws
+RUN mkdir carto_ws
+WORKDIR /ros1_ws/carto_ws
+RUN wstool init src \
+    && wstool merge -t src https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall \
+    && wstool update -t src 
+
+RUN rm -rf /etc/ros/rosdep/sources.list.d/20-default.list \
+    && rosdep init \
+    && rosdep update \
+    && sed -i '46s/^/<!-- /; 46s/$/ -->/' src/cartographer/package.xml \
+    && rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
+
+# cd into carto_ws/src
+WORKDIR /ros1_ws/carto_ws/src
+RUN git clone -b melodic-devel https://github.com/ros-perception/perception_pcl.git \
+    && git clone https://github.com/ros-perception/pcl_msgs \
+    && git clone -b noetic-devel https://github.com/jsk-ros-pkg/geometry2_python3.git 
+
+# Then go back to carto_ws and run
+WORKDIR /ros1_ws/carto_ws
+RUN rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y 
+
+WORKDIR /ros1_ws/carto_ws
+RUN src/cartographer/scripts/install_abseil.sh
+
+# replace setup.bash in ros_entrypoint.sh
+RUN sed -i 's|source "/opt/ros/\$ROS_DISTRO/setup.bash"|source "/ros1_ws/devel/setup.bash"|g' /ros_entrypoint.sh
+
+# Set up the Network Configuration
+# Example with the ROS_MASTER_URI value set as the one running on the Host System
+# ENV ROS_MASTER_URI http://1_simulation:11311
+
+# Cleanup
+RUN rm -rf /root/.cache
+
+# Start a bash shell when the container starts
+CMD ["bash"]
